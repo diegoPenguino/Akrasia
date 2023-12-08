@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block headers %}
+{% endblock %}
+
+
+{% block content %}
+    <div class="container-fluid">
+        <form action="{% url 'create_task' %}" method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="title">Title</label>
+                <input type="text" aria-label="Title" class="form-control" name="title" id="title">
+            </div>
+            <div class="mb-3">
+                <label for="description">Description</label>
+                <textarea aria-label="Description" class="form-control" name="description"
+                          id="description" rows="3"></textarea>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" id="onetime" checked name="typeTask">
+                            <label class="form-check-label" for="onetime">
+                                One time task
+                            </label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="date">Date</label>
+                            <input type="date" aria-label="Date" class="form-control" name="date" id="datePicker">
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" id="foreverTask" name="typeTask">
+                            <label class="form-check-label" for="foreverTask">
+                                Repeat task forever
+                            </label>
+                        </div>
+
+
+                        <div id="additionalCheckboxes">
+                            {% for day in week_days %}
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="{{ day }}" value="yes"
+                                           name="{{ day }}"
+                                           disabled>
+                                    <label class="form-check-label" for="{{ day }}">{{ day }}</label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <br>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function () {
+            $('#foreverTask').change(function () {
+                if (this.checked) {
+                    $('#additionalCheckboxes input').prop('disabled', false);
+                    $('#datePicker').prop('disabled', true);
+                } else {
+                    $('#additionalCheckboxes input').prop('disabled', true);
+                    $('#additionalCheckboxes input').prop('checked', false);
+                    $('#datePicker').prop('disabled', false);
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            $('#onetime').change(function () {
+                if (this.checked) {
+                    $('#additionalCheckboxes input').prop('disabled', true);
+                    $('#additionalCheckboxes input').prop('checked', false);
+                    $('#datePicker').prop('disabled', false);
+                } else {
+                    $('#additionalCheckboxes input').prop('disabled', false);
+                    $('#datePicker').prop('disabled', true);
+                }
+            });
+        });
+        Date.prototype.toDateInputValue = (function () {
+            const local = new Date(this);
+            local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+            return local.toJSON().slice(0, 10);
+        });
+        $(document).ready(function () {
+            $('#datePicker').val(new Date().toDateInputValue());
+        });
+    </script>
+
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block headers %}
+    <script src="https://kit.fontawesome.com/15974f9624.js" crossorigin="anonymous"></script>
+{% endblock %}
+
+
+{% block content %}
+    {% if user.is_authenticated %}
+        {% include 'home_logged.html' %}
+    {% else %}
+        <h1>Hi Guest</h1>
+    {% endif %}
+{% endblock %}
